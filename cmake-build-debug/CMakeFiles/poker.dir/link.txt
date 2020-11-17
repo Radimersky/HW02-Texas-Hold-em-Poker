@@ -1,0 +1,1 @@
+/usr/bin/cc  -std=c99 -pedantic -Wall -Wextra -Werror -g  -rdynamic CMakeFiles/poker.dir/main.c.o  -o poker 

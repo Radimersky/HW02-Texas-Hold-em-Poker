@@ -1,0 +1,256 @@
+---
+title: "HW02: Texas Hold'em Poker"
+layout: "homework"
+list-of-files: ["main.c"]
+publish: now
+deadline-early: "2018-03-24 24:00"
+deadline-final: "2018-03-27 24:00"
+author: David Klaška
+editor: Roman Lacko
+editor-email: xlacko1@fi.muni.cz
+use-mathjax: 1
+---
+
+= HW02: Texas Hold'em Poker
+
+Doplnění zadání:
+
+**2018-03-17 15:15**::
+Upřesněno bodování druhé části úkolu.
+
+**2018-03-17 15:15**::
+Mírnější limity na délku trvání výpočtu druhé části úkolu.
+
+== Představení úkolu
+
+V této úloze se budeme věnovat světově nejpopulárnější karetní hře:
+pokeru. Tato hra je známá ve spoustě variant, my se zde budeme zabývat
+tou patrně nejrozšířenější, kdy každý hráč drží v ruce dvě karty a na
+stůl je rozdáno (až) pět karet společných pro všechny hráče. Podrobné
+informace o http://en.wikipedia.org/wiki/Texas_hold_%27em[této variantě]
+i o http://en.wikipedia.org/wiki/Poker[pokeru obecně], zejména pak
+http://en.wikipedia.org/wiki/List_of_poker_hands[ohodnocení jednotlivých
+karetních kombinací] lze nalézt např. na Wikipedii.
+
+'''
+
+== Zadání
+
+Vaším úkolem bude napsat program, který bude komunikovat s uživatelem
+prostřednictvím příkazové řádky. Váš program bude samozřejmě muset umět
+porovnávat mezi sebou jednotlivé karetní kombinace; abychom zde ale jen
+nekopírovali funkcionalitu spousty programů dostupných na Internetu,
+bude si muset váš program poradit i s méně otřelým a snad i docela
+zajímavým problémem.
+
+Prvním úkolem je tedy napsat algoritmus rozhodující, který z dvou hráčů
+vyhrál, bude-li znát obě karty obou hráčů i všech pět karet ležících na stole.
+
+Tím druhým je následující problém: v situaci, kdy hrají dva hráči a váš
+program zná karty jednoho hráče a čtyři karty na stole, určit, kterou kartu
+(popř. které karty) by si tento hráč nejvíc přál vidět na riveru (tj.
+přinesla by mu v průměru největší část potu).
+
+=== Formát vstupu a výstupu
+
+Karty budou reprezentovány dvojicí znaků: první z nich určuje hodnotu
+(`2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `T`, `J`, `Q`, `K`, `A`
+pro po řadě dvojku, trojku, ...,
+desítku, kluka, dámu, krále, eso), druhý barvu (`h`, `d`, `s`, `c` pro po řadě
+srdce [.text-danger]#♥#, káry [.text-danger]#♦#, piky [.text-dark]#♠#,
+kříže [.text-dark]#♣#). Vstup bude sestávat z několika po sobě jdoucích
+instancí (situací), výstup pak z odpovědí na jednotlivé instance.
+Program tedy neskončí hned po vyřešení jediné instance, ale až když se na
+vstupu nenachází žádná další instance (_end of file_).
+
+=== Porovnávání dvou hráčů
+
+Tato část je za 7 bodů, z toho 4 za __triviální vstupy__.
+
+Bude-li mít program za úkol určit, který hráč vyhrál, budou vstupní
+instance sestávat ze tří řádků:
+
+* na prvním budou **dvě** karty jednoho hráče,
+* na druhém **dvě** karty druhého hráče,
+* na třetím **pět** karet ležících na stole
+
+Váš program odpoví jediným znakem na jednom řádku:
+
+* `W`, pokud první hráč vyhrál;
+* `D`, pokud nastala remíza;
+* `L`, pokud první hráč prohrál.
+
+Karty jsou na jednom řádku oddělené mezerou.
+Výstup je ukončen znakem pro nový řádek.
+
+=== Nejvýhodnější karta
+
+[.add]#Tato část je za 2 body#.
+
+Bude-li mít program za úkol určit, která karta je nejvýhodnější na
+riveru, bude spuštěn s parametrem `-r` a vstupní instance budou sestávat
+ze dvou řádků:
+
+* na prvním budou **dvě** karty hráče, u nějž nás zajímá, jakou kartu
+  by chtěl vidět jako pátou na stole,
+* na druhém řádku **čtyři** karty ležící na stole.
+
+Stejně jako v prvním případě, karty na vstupu jsou oddělené mezerou.
+
+Výstup bude tvořen seznamem karet oddělených mezerami, a to těch, které
+hráči průměru přinesou největší část potu. Karty budou _seřazeny vzestupně_
+nejprve podle hodnoty, pak podle barvy v pořadí uvedeném výše. (Pokud
+pořadí není z tohoto popisu jasné, podívejte se na ukázkový příklad
+níže, popřípadě může konzultovat vzorové řešení.)
+
+Ještě je třeba si jednoznačně ujasnit, co znamená "největší část potu
+v průměrném případě": Pro jednoduchost budeme předpokládat, že o kartách
+druhého hráče nevíme vůbec nic, tj. každá možnost je stejně pravděpodobná.
+Také budeme předpokládat, že v případě remízy se pot rozdělí rovným dílem
+mezi oba hráče. Část potu, kterou hráč pro danou pátou kartu na stole
+získá, je tedy určena jako +++$ \frac{w + \frac{d}{2}}{w + d + l}$+++,
+kde +++$w$+++ je počet případů, kdy první hráč vyhrál, +++$d$+++ je počet
+případů, kdy nastala remíza, a +++$l$+++ je počet případů, kdy první hráč
+prohrál.
+
+=== Bonus
+
+Jako bonus za 3 body můžete v případě, že se hledá nejvýhodnější karta, navíc
+vypsat, jakou část potu daný hráč v průměrném případě získá, pokud se
+nejvýhodnější karta na riveru skutečně objeví, a to následovně:
+
+* (1 bod) Pokud bude program spuštěn s parametrem `-r`+++$d$+++,
+  kde +++$d$+++ je celé číslo splňující +++$ 1 \leq d \leq 9 $+++, vypište
+  výsledek jako desetinné číslo s přesností na +++$ d $+++ desetinných míst
+  (podle běžných konvencí o zakrouhlování), k čemuž můžete výhodně použít
+  funkci `printf("%.*lf", d, ...)` pro výpis typu `double` na +++$d$+++
+  desetinných míst).
+* (1 bod) Pokud bude program spuštěn s parametrem `-r0`, vypište výsledek
+  jako racionální číslo (v základním tvaru) s čitatelem a jmenovatelem
+  oddělenými lomítkem.
+* (1 bod) Tento speciální bonusový bod získáte, pokud implementujete
+  funkcionalitu z první odrážky (tj. výpis s přesností na daný počet
+  desetinných míst) naprosto bezchybně. Při reprezentaci racionálních čísel,
+  která nejsou (celočíselným) násobkem (celočíselné) mocniny dvojky,
+  v počítači dochází k zaokrouhlovacím chybám, které můžou způsobit, že
+  se výpis bude na posledním desetinném místě o jedničku lišit od správného
+  výsledku. Takové případy můžete ignorovat (nebudou testovány) pro zisk
+  prvního bonusového bodu; třetí bonusový bod tedy získáte, pokud si tyto
+  případy pohlídáte.
+
+'''
+
+== Ukázkové příklady
+
+Na vstup (bez parametrů):
+
+[source]
+----
+3d 3h
+Kc Qs
+Qd 8s 2c 3c Kh
+4s 8d
+5c 8h
+7c 7h Ac Kd 2d
+As Ad
+2h 3h
+Ac 4h 5h Ks Ah
+----
+
+je správným výstupem
+
+[source]
+----
+W
+D
+L
+----
+
+Komentář:
+
+* V prvním případě má první hráč trojici trojek, zatímco druhý jen dva páry.
+* V druhém případě mají oba hráči za nejlepší kombinaci dvě sedmičky, eso,
+  krále a osmičku (to, že jeden drží pětku, zatímco druhý čtverku, je již
+  nepodstatné, jelikož se vždy bere v úvahu jen pětice karet).
+* Ve třetím případě má první hráč "jen" esový poker, zatímco druhý má
+  (nejnižší možnou) straight flush.
+
+Na vstup
+
+[source]
+----
+3d 3h
+Qd 8s 2c 4c
+Js Jd
+6s Jh Jc 7s
+----
+
+je správným výstupem:
+
+* s parametrem `-r`
+
+[source]
+----
+3s
+2h 2d 2s 2c 3h 3d 3c 4h 4d 4c 5h 5d 5c 6h 6d 6c 7h 7d 7c 8h 8d 8c 9h 9d 9c Th Td Tc Qh Qd Qs Qc Kh Kd Ks Kc Ah Ad As Ac
+----
+
+* s parametrem `-r3`
+
+[source]
+----
+3s
+0.959
+2h 2d 2s 2c 3h 3d 3c 4h 4d 4c 5h 5d 5c 6h 6d 6c 7h 7d 7c 8h 8d 8c 9h 9d 9c Th Td Tc Qh Qd Qs Qc Kh Kd Ks Kc Ah Ad As Ac
+1.000
+----
+
+* s parametrem `-r0`
+
+[source]
+----
+3s
+949/990
+2h 2d 2s 2c 3h 3d 3c 4h 4d 4c 5h 5d 5c 6h 6d 6c 7h 7d 7c 8h 8d 8c 9h 9d 9c Th Td Tc Qh Qd Qs Qc Kh Kd Ks Kc Ah Ad As Ac
+1/1
+----
+
+Komentář:
+* V prvním případě chce hráč na riveru rozhodně vidět trojku, protože ta
+  mu přinese trojici, navíc chce vidět spíš pikovou než křížovou, jelikož
+  křížová by přinesla riziko, že soupeř má flush. Pokud skutečně přijde
+  piková trojka, pak druhý hráč vyhraje, pokud drží dvě dámy (3/990),
+  dvě osmičky (3/990), dvě čtverky (3/990), eso a pětku (8/495) nebo pětku
+  a šestku (8/495); v opačném případě vyhraje první hráč, takže jeho část
+  potu je v průměru 949/990.
+* V druhém případě má první hráč téměř jistou výhru; pokazit by mu ji mohla
+  jen piková straight flush soupeře. První hráč tedy doufá na riveru
+  v kteroukoli kartu kromě pik od trojky po desítku.
+
+=== Požadavky na rychlost
+
+Váš program by samozřejmě měl být dostatečně rychlý.
+Konkrétně: vstupní instanci první úlohy (porovnání dvou hráčů) by měl
+být schopen vyřešit do desetiny sekundy a vstupní instanci druhé úlohy
+(nejvýhodnější karta na riveru) pak do [.rm]#jedné sekundy# [.add]#čtyř sekund#,
+a to včetně zpomalení způsobeného Valgrindem. To je v prvním případě více než
+moře času a ve druhém stále dost na to, abyste jednoduše prošli všechny možnosti,
+pokud jste si napsali porovnávání dvou hráčů rozumně efektivně.
+
+[.alert.alert-info]
+icon:info[role="mr-2"] Časová efektivita vašeho programu je testována již testy nanečisto.
+
+'''
+
+== Tipy a poznámky
+
+* Pro případ, že byste měli nejasnosti týkající se formátu vstupu a výstupu
+  nebo srovnávání jednotlivých karetních kombinací, můžete srovnat
+  chování vašeho programu se vzorovým řešením, které je vám k dispozici
+  na Aise na `/home/kontr/hw02/poker`
+* Můžete předpokládat (stejně jako vzorové řešení), že vstup bude vždy
+  korektní, tj. bude odpovídat popisu ze zadání.
+* Výstup vašeho programu bude testován strojově, nesmí se tedy lišit ani
+  v jediném znaku.
+* Testy naostro v celkové hodnotě 4 bodů budou tvořeny pouze triviálními
+  vstupy, kde ani jeden hráč nebude mít ani pár (tj. oba budou mít high card).
